@@ -25,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FormDialog(props) {
     const [value, setValue] = useState(props.defaultValue);
+    const [errorValue, setErrorValue] = useState(null);
     const [dialogTitle, setDialogTitle] = useState(props.dialogTitle || "Inform a new value.");
     const [fieldLabel, setFieldLabel] = useState(props.fieldLabel || "New Value");
     const [open, setOpen] = useState(false);
@@ -39,12 +40,18 @@ export default function FormDialog(props) {
     };
 
     const handleChangeValue = (event) => {
+        setErrorValue(null);
         setValue(event.target.value);
     }
 
     const submit = () => {
-        props.confirmButton(props.itemId, value);
-        setOpen(false);
+        if (value) {
+            props.confirmButton(props.itemId, value);
+            handleClose();
+        } else {
+            setErrorValue(`${fieldLabel} is required.`)
+        }
+        
     }
 
 
@@ -70,6 +77,8 @@ export default function FormDialog(props) {
                         label={fieldLabel}
                         defaultValue={value}
                         onChange={handleChangeValue}
+                        helperText={errorValue}
+                        error={!!errorValue}
                         fullWidth
                     />
                 </DialogContent>

@@ -10,15 +10,14 @@ class AuthService {
             password
         })
         .then(response => {
-            console.log("response... " + response)  
             if (response.data.token) {
-            localStorage.setItem("user", JSON.stringify(response.data));
+                localStorage.setItem("user", JSON.stringify(response.data));
             }
 
-            return response.data;
+            return response;
         })
         .catch(err =>{
-            console.log(err);
+            return err.response;
         });
     }
 
@@ -37,10 +36,10 @@ class AuthService {
             if (response.data.token) {
                 localStorage.setItem("user", JSON.stringify(response.data));
             }
-            return response.data;
+            return response;
         })
         .catch(err =>{
-            console.log(err);
+            return err.response;
         });
     }
 

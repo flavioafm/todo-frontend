@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
         theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[700],
     },
     addButton:{
-        marginTop: '7px'
+        marginTop: '17px'
     },
     taskItem: {
         marginTop: '5px'
@@ -44,13 +44,16 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: '32px'
     },
     divider: {
-        margin: '20px'
+        margin: '20px 5px 20px 5px'
+        // marginTop: '20px',
+        // marginBottom: '20px',
     }
   }));
 
 const Project = (props) => {
 
     const [titleNewTask, setTitleNewTask] = useState("");
+    const [errorTitleNewTask, setErrorTitleNewTask] = useState(null);
     const [project, setProject] = useState(props.project);  
     const [tasks, setTasks] = useState(props.project.tasks);  
     
@@ -68,6 +71,7 @@ const Project = (props) => {
     }
 
     const handleNewTask = async () => {
+        setErrorTitleNewTask(null);
         if (titleNewTask) {
             const projectUpdated = Object.assign([], project);
             projectUpdated.tasks.push({title: titleNewTask});
@@ -75,7 +79,9 @@ const Project = (props) => {
             setProject(updatedProject);
             setTasks(updatedProject.tasks);
             setTitleNewTask("");
-        }        
+        } else {
+            setErrorTitleNewTask('Task description is required.');
+        }       
         
     }
 
@@ -140,6 +146,17 @@ const Project = (props) => {
         return date.toLocaleString()
     }
 
+    const handleTooltip = (task) => {
+        const createdAtMessage = `Created at ${handleShowFinishedAt(task.createdAt)}`;
+        const finishedAtMessage = `Finished at ${handleShowFinishedAt(task.finishedAt)}`;
+        return task.done ? 
+            (<span>
+                {createdAtMessage}
+                <br/>
+                {finishedAtMessage}
+            </span>): 
+            createdAtMessage
+    }
 
     const handleSortTasks = (unsortedTasks) => {
         return _.sortBy(unsortedTasks, o => o.done)
@@ -151,8 +168,8 @@ const Project = (props) => {
                     <Grid direction="row" container justify="space-between" alignItems="flex-start"  key={task._id}>
                         <Grid item xm={6} md={7} lg={8} xl={9}> 
                             <Tooltip 
-                                disableHoverListener={!task.done}
-                                title={ task.done ? `Finished at ${handleShowFinishedAt(task.finishedAt)}` : ""} 
+                                //disableHoverListener={!task.done}
+                                title={handleTooltip(task)} 
                                 placement="bottom-start"
                             >
                                 <FormGroup>
@@ -190,10 +207,6 @@ const Project = (props) => {
         const sortedList = handleSortTasks(list);
         const todoList = sortedList.filter(item => item.done === false);
         const doneList = sortedList.filter(item => item.done === true);
-
-        console.log("todoList", todoList)
-        console.log("doneList", doneList)
-
         return (
             <>
                 {!!todoList.length && (
@@ -225,35 +238,43 @@ const Project = (props) => {
                 className={classes.cardHeader}
             />
             <CardContent>
-                {/* <FormLabel component="legend">To Do</FormLabel> */}
+                <Grid direction="row" container alignItems="flex-start" justify="space-between" >
+                    <Grid item xs={10}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="titleNewTask"
+                            label="New Task"
+                            id="titleNewTask"
+                            size="small"
+                            value={titleNewTask}
+                            helperText={errorTitleNewTask}
+                            error={!!errorTitleNewTask}
+                            onChange={handleChangeTitleNewTask}
+                        />
+                    </Grid>
+                    <Grid item xm={2}>
+                        <Button 
+                            size="medium" 
+                            margin="normal"
+                            variant="contained" 
+                            color="primary" 
+                            className={classes.addButton}
+                            onClick={handleNewTask}
+                        >
+                        Add
+                        </Button>
+
+                    </Grid>
+                </Grid>
+                {!!project.tasks.length && <Divider className={classes.divider} variant="middle" />}
                 {
                     renderLists(project.tasks)
                     
                 }
             </CardContent>
-            <CardActions>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="titleNewTask"
-                    label="New Task"
-                    id="titleNewTask"
-                    size="small"
-                    value={titleNewTask}
-                    onChange={handleChangeTitleNewTask}
-                />
-                <Button 
-                    size="medium" 
-                    variant="contained" 
-                    color="primary" 
-                    className={classes.addButton}
-                    onClick={handleNewTask}
-                >
-                  Add
-                </Button>
-            </CardActions>
         </Card>
     )
 

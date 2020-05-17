@@ -11,6 +11,7 @@ import EditIcon from '@material-ui/icons/Edit';
 
 export default function FormDialog(props) {
     const [value, setValue] = useState(props.defaultValue);
+    const [errorValue, setErrorValue] = useState(null);
     const [dialogTitle, setDialogTitle] = useState(props.dialogTitle || "Inform a new value.");
     const [fieldLabel, setFieldLabel] = useState(props.fieldLabel || "New Value");
     const [open, setOpen] = useState(false);
@@ -24,12 +25,17 @@ export default function FormDialog(props) {
     };
 
     const handleChangeValue = (event) => {
+        setErrorValue(null);
         setValue(event.target.value);
     }
 
     const submit = () => {
-        props.confirmChange(props.itemId, value);
-        setOpen(false);
+        if (value) {
+            props.confirmChange(props.itemId, value);
+            handleClose();
+        } else {
+            setErrorValue(`${fieldLabel} is required.`)
+        }
     }
 
 
@@ -55,6 +61,8 @@ export default function FormDialog(props) {
                         defaultValue={value}
                         onChange={handleChangeValue}
                         fullWidth
+                        helperText={errorValue}
+                        error={!!errorValue}
                     />
                 </DialogContent>
                 <DialogActions>

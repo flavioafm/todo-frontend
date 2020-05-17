@@ -10,7 +10,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import AuthService from "../service/AuthService";
 
 
@@ -45,12 +45,23 @@ const useStyles = makeStyles((theme) => ({
 	submit: {
 		margin: theme.spacing(3, 0, 2),
 	},
+	link: {
+		cursor: 'pointer'
+	},
+	error:{
+		width: '100%',
+		marginTop: '15px',
+		marginBottom: '10px',
+		elevation: 0,
+		backgroundColor: theme.palette.secondary.main,
+	}
 }));
 
  const Login = (props) => {
 	const classes = useStyles();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState(null);
 
 	const handleEmailChange = (event) => {
         setEmail(event.target.value)
@@ -62,10 +73,11 @@ const useStyles = makeStyles((theme) => ({
 
 	const handleLogin = async () => {
 		const result = await AuthService.login(email, password);
-		if (result.user ){
+		if (result.status === 200){
 			props.history.push("/home");
+		} else {
+			setError(result.data.error)
 		}
-		console.log(result)
 	}
 
 	const handleSignup = async () => {
@@ -106,6 +118,11 @@ const useStyles = makeStyles((theme) => ({
 					defaultValue={password}
 					onKeyUp={handlePasswordChange}
 				/>
+				{
+					error && (
+						<SnackbarContent message={error} className={classes.error}/>
+					)
+				}				
 				<Button
 					type="submit"
 					fullWidth
@@ -118,9 +135,9 @@ const useStyles = makeStyles((theme) => ({
 				</Button>
 				<Grid container>
 					<Grid>
-					<Link variant="body2" onClick={handleSignup}>
-						{"Don't have an account? Sign Up"}
-					</Link>
+						<Link variant="body2" onClick={handleSignup} className={classes.link}>
+							{"Don't have an account? Sign Up"}
+						</Link>
 					</Grid>
 				</Grid>
 			</div>

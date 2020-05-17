@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 import AuthService from "../service/AuthService";
 
 function Copyright() {
@@ -46,13 +46,27 @@ const useStyles = makeStyles((theme) => ({
     submit: {
         margin: theme.spacing(3, 0, 2),
     },
+    link: {
+		cursor: 'pointer'
+    },
+    error:{
+		width: '100%',
+		marginTop: '15px',
+		marginBottom: '10px',
+		elevation: 0,
+		backgroundColor: theme.palette.secondary.main,
+	}
 }));
 
 const SignUp = (props) => {
     const classes = useStyles();
     const [name, setName] = useState("");
+    const [nameError, setNameError] = useState(null);
     const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState(null);
     const [password, setPassword] = useState("");
+    const [passwordError, setPasswordError] = useState(null);
+    const [error, setError] = useState(null);
 
     const handleNameChange = (event) => {
         setName(event.target.value)
@@ -66,13 +80,41 @@ const SignUp = (props) => {
         setPassword(event.target.value)
     }
 
-    const handleSignup = async () => {
+    const handleFieldError = (data) => {
+        switch (data.field) {
+            case 'name':
+                setNameError(data.error)
+                break;
+            case 'email':
+                setEmailError(data.error)
+                break;
+            case 'password':
+                setPasswordError(data.error)
+                break;
+            default:
+                break;
+        }
+    }
 
+    const handleClearFieldErros = () => {
+        setNameError(null);
+        setEmailError(null);
+        setPasswordError(null);
+    }
+
+    const handleSignup = async () => {
+        handleClearFieldErros();
 		const result = await AuthService.register(name, email, password);
-		if (result.user ){
+		if (result.status === 200){
 		    props.history.push("/home");
-		}
-		console.log(result)
+		} else {
+            if (result.data.field) {
+                handleFieldError(result.data);
+            } else {
+                setError(result.data.error)
+            }
+        }
+		
 	}
 
     const handleLogin = () => {
@@ -89,50 +131,55 @@ const SignUp = (props) => {
                 <Typography component="h1" variant="h5">
                     Sign up
                 </Typography>
-                <Grid container spacing={2} className={classes.fields}>
-                    <Grid item xs={12}>
-                        <TextField
-                            autoComplete="fname"
-                            name="firstName"
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="firstName"
-                            label="First Name"
-                            autoFocus
-                            defaultValue={name}
-                            onKeyUp={handleNameChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            defaultValue={email}
-                            onKeyUp={handleEmailChange}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            defaultValue={password}
-                            onKeyUp={handlePasswordChange}
-                        />
-                    </Grid>
-                    
-                </Grid>
+                <TextField
+                    autoComplete="fname"
+                    name="firstName"
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="Name"
+                    autoFocus
+                    defaultValue={name}
+                    helperText={nameError}
+                    error={!!nameError}
+                    onKeyUp={handleNameChange}
+                />
+                <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    margin="normal"
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    defaultValue={email}
+                    helperText={emailError}
+                    error={!!emailError}
+                    onKeyUp={handleEmailChange}
+                />
+                <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    margin="normal"
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    defaultValue={password}
+                    helperText={passwordError}
+                    error={!!passwordError}
+                    onKeyUp={handlePasswordChange}
+                />
+                {
+					error && (
+						<SnackbarContent message={error} className={classes.error}/>
+					)
+				}				
                 <Button
                     type="submit"
                     fullWidth
@@ -145,7 +192,7 @@ const SignUp = (props) => {
                 </Button>
                 <Grid container justify="flex-end">
                     <Grid item>
-                    <Link variant="body2" onClick={handleLogin}>
+                    <Link variant="body2" onClick={handleLogin} className={classes.link}>
                         Already have an account? Sign in
                     </Link>
                     </Grid>
