@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import AuthService from "../service/AuthService";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 function Copyright() {
@@ -62,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState(null);
+	const [authenticating, setAuthenticating] = useState(false)
 
 	const handleEmailChange = (event) => {
         setEmail(event.target.value)
@@ -72,12 +74,15 @@ const useStyles = makeStyles((theme) => ({
     }
 
 	const handleLogin = async () => {
+		setAuthenticating(true);
 		const result = await AuthService.login(email, password);
 		if (result.status === 200){
 			props.history.push("/home");
 		} else {
 			setError(result.data.error)
 		}
+		setAuthenticating(false);
+
 	}
 
 	const handleSignup = async () => {
@@ -131,7 +136,13 @@ const useStyles = makeStyles((theme) => ({
 					className={classes.submit}
 					onClick={handleLogin}
 				>
-					Sign In
+					{/* Sign In */}
+					{
+						authenticating && <CircularProgress size={24} color="inherit" />
+					}
+					{
+						!authenticating && "Sign In"
+					}
 				</Button>
 				<Grid container>
 					<Grid>
