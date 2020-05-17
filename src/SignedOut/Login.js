@@ -52,6 +52,14 @@ const useStyles = makeStyles((theme) => ({
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
+	const handleEmailChange = (event) => {
+        setEmail(event.target.value)
+    }
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value)
+    }
+
 	const handleLogin = async () => {
 		const result = await AuthService.login(email, password);
 		if (result.user ){
@@ -84,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 					name="email"
 					autoFocus
 					defaultValue={email}
-					onKeyUp={setEmail}
+					onKeyUp={handleEmailChange}
 				/>
 				<TextField
 					variant="outlined"
@@ -96,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
 					type="password"
 					id="password"
 					defaultValue={password}
-					onKeyUp={setPassword}
+					onKeyUp={handlePasswordChange}
 				/>
 				<Button
 					type="submit"
