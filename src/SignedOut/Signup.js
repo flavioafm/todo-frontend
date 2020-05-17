@@ -67,9 +67,6 @@ const SignUp = (props) => {
     }
 
     const handleSignup = async () => {
-		//this.form.validateAll();
-		console.log(email)
-		console.log(password)
 
 		const result = await AuthService.register(name, email, password);
 		if (result.user ){

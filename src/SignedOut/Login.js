@@ -53,10 +53,6 @@ const useStyles = makeStyles((theme) => ({
 	const [password, setPassword] = useState("");
 
 	const handleLogin = async () => {
-		//this.form.validateAll();
-		console.log(email)
-		console.log(password)
-
 		const result = await AuthService.login(email, password);
 		if (result.user ){
 			props.history.push("/home");
