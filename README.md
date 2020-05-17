@@ -1,6 +1,6 @@
 # Todo list (Frontend) 
-[DEMO ONLINE](https://edirect-todo-client.herokuapp.com/home)
-[GIT BACKEND][https://github.com/flavioafm/todo-backend]
+[DEMO ONLINE](https://edirect-todo-client.herokuapp.com/home)<br/>
+[Git Backend][https://github.com/flavioafm/todo-backend]
 
 ## Available Scripts
 
