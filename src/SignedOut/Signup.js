@@ -55,7 +55,22 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: '10px',
 		elevation: 0,
 		backgroundColor: theme.palette.secondary.main,
-	}
+	},
+    bg: {
+		/* Set rules to fill background */
+		minHeight: '100%',
+		minWidth: '1024px',
+		
+		/* Set up proportionate scaling */
+		width: '100%',
+		height: 'auto',
+		
+		/* Set up positioning */
+		position: 'fixed',
+		top: 0,
+		left: 0,
+		zIndex: -1,
+	},
 }));
 
 const SignUp = (props) => {
@@ -124,6 +139,7 @@ const SignUp = (props) => {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
+            <img alt={''} src='https://img.wallpapersafari.com/desktop/800/450/38/0/OvlkAc.png' className={classes.bg}/>
             <div className={classes.paper}>
                 <Typography component="h1" variant="h5">
                     Sign up
